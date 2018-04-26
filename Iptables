@@ -1,0 +1,52 @@
+IPTABLES
+------------------------------------------------------------------------
+Flexible Firewall built for linux systems
+Comand line firewall that uses policy chains to allow or block traffic
+
+When a connection tries to establish a connection system iptable looks for a rules in its list to match into , if doesnt find one it results to the defualt action .
+
+
+GUI Alternatives -> Firestater
+
+You need to be extreemly careful when configuring iptable rules particularlty if you are secure shelled into a server because on wrong command can permanently lock you out until its manually fixed at the 
+physical machine.
+
+
+Commands
+--------
+Inserting rules for the firewall
+_-------------------------------_
+sudo apt-get install iptables (Check if you have latest version of iptables )
+sudo iptables -h (help)
+sudo iptables -L -v (Check firewall policy -v->verbose)
+sudo iptables --flush (Flush all the rules or resets)
+sudo iptables -L INPUT -n  --line-numbers (Check for specific rules that you have for each chain for input)
+sudo iptables -I INPUT 1 -s 10.10.10.10 -j DROP (Check for specific which chain input)
+sudo iptables -D INPUT 1 (Deleting an input)
+sudo iptables -I INPUT -i eth0 -s 192.168.0.0/24 -j DROP (Any firewall should block private ip address on a public interface. Connection to public interface should come only from public ip address. Blocking private IP addresses from connecting to your firewall through a public interface)
+sudo iptables-save > /home/administrator/firewall-rules (save ip rules)
+sudo iptables-restore < /home/administrator/firewall-rules (retore ip rules)
+
+IPTABLE uses 3 different chain rule
+INPUT -The chain used to controll the incoming connections example user tries to ssh to your PC iptable will try to match the IP address input rule
+FOWARD - The chain used for incoming connections that aren't delivered locally .Used for routing , nating 
+OUTPUT - The chain is used for outgoing connection example when you trying to ping a website iptables will check its output chain and see the rules are there regarding ping.
+
+IPTABLE Rules
+Accept -> Allows the connection
+Drop -> Drops the connection (Used when you dont want the source to realize your system exists)
+Reject -> Doesnt allow a connection but sends back an error .These is best when you dont want a particular source to connect to your system 
+
+
+IPTABLE IP Fowarding
+_------------------_
+
+cd /proc/sys/net/ipv4
+echo 1 > ip_foward
+sudo iptables -A PREROUTING -t nat -p tcp --dport 80 -j REDIRECT --to-port 8080
+sudo iptables -A PREROUTING -t nat -p tcp --dport 443 -j REDIRECT --to-port 8080
+
+
+
+
+
